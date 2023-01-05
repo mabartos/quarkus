@@ -80,11 +80,17 @@ tags:
   - jakarta
 
 recipeList:
-#  - org.openrewrite.maven.AddDependency:
-#      groupId: jakarta.activation
-#      artifactId: jakarta.activation-api
-#      version: 2.x
-#      onlyIfUsing: javax.activation.*
+  - org.openrewrite.maven.AddDependency:
+      groupId: jakarta.activation
+      artifactId: jakarta.activation-api
+      version: 2.x
+      onlyIfUsing: javax.activation.*
+
+  - org.openrewrite.maven.AddDependency:
+      groupId: jakarta.activation
+      artifactId: jakarta.activation-api
+      version: 2.x
+      onlyIfUsing: com.sun.activation.*
 
   # Upgrade the dependency to use the jakarta namespace if an older version already exists.
   - org.openrewrite.maven.UpgradeDependencyVersion:
@@ -103,6 +109,10 @@ recipeList:
   - org.openrewrite.maven.RemoveDependency:
       groupId: javax.activation
       artifactId: javax.activation-api
+
+  - org.openrewrite.maven.RemoveDependency:
+      groupId: com.sun.activation
+      artifactId: jakarta.activation
 
 ---
 type: specs.openrewrite.org/v1beta/recipe
@@ -594,11 +604,17 @@ name: org.openrewrite.java.migrate.JavaxMailToJakartaMail
 displayName: Migrate deprecated `javax.mail` packages to `jakarta.mail`
 description: Java EE has been rebranded to Jakarta EE, necessitating a package relocation.
 recipeList:
-#  - org.openrewrite.maven.AddDependency:
-#      groupId: jakarta.mail
-#      artifactId: jakarta.mail-api
-#      version: 2.x
-#      onlyIfUsing: javax.mail.*
+  - org.openrewrite.maven.AddDependency:
+      groupId: jakarta.mail
+      artifactId: jakarta.mail-api
+      version: 2.x
+      onlyIfUsing: javax.mail.*
+
+  - org.openrewrite.maven.AddDependency:
+      groupId: jakarta.mail
+      artifactId: jakarta.mail-api
+      version: 2.x
+      onlyIfUsing: com.sun.mail.*
 
   # Upgrade the dependency to use the jakarta namespace if an older version already exists.
   - org.openrewrite.maven.UpgradeDependencyVersion:
@@ -615,6 +631,10 @@ recipeList:
   - org.openrewrite.maven.RemoveDependency:
       groupId: javax.mail
       artifactId: javax.mail-api
+
+  - org.openrewrite.maven.RemoveDependency:
+      groupId: com.sun.mail
+      artifactId: jakarta.mail
 
 ---
 type: specs.openrewrite.org/v1beta/recipe
@@ -916,17 +936,23 @@ tags:
 
 recipeList:
   # JaxWS API(x) .. update
-#  - org.openrewrite.maven.AddDependency:
-#      groupId: jakarta.xml.ws
-#      artifactId: jakarta.xml.ws-api
-#      version: 3.x
-#      onlyIfUsing: javax.xml.ws.*
+  - org.openrewrite.maven.AddDependency:
+      groupId: jakarta.xml.ws
+      artifactId: jakarta.xml.ws-api
+      version: 4.x
+      onlyIfUsing: javax.xml.ws.*
+
+  - org.openrewrite.maven.AddDependency:
+      groupId: jakarta.xml.ws
+      artifactId: jakarta.xml.ws-api
+      version: 4.x
+      onlyIfUsing: com.sun.xml.ws.*
 
   # Upgrade the dependency to use the jakarta namespace if an older version already exists.
   - org.openrewrite.maven.UpgradeDependencyVersion:
       groupId: jakarta.xml.ws
       artifactId: jakarta.xml.ws-api
-      newVersion: 3.x
+      newVersion: 4.x
 
   # JaxWS Runtime(x) .. update
 #  - org.openrewrite.maven.AddDependency:
@@ -940,7 +966,7 @@ recipeList:
   - org.openrewrite.maven.UpgradeDependencyVersion:
       groupId: com.sun.xml.ws
       artifactId: jaxws-rt
-      newVersion: 3.x
+      newVersion: 4.x
 
   # f(x).xml.ws
   - org.openrewrite.java.ChangePackage:
@@ -952,6 +978,11 @@ recipeList:
   - org.openrewrite.maven.RemoveDependency:
       groupId: javax.xml.ws
       artifactId: jaxws-api
+
+  # Remove Sun JaxWs API(x)
+  - org.openrewrite.maven.RemoveDependency:
+      groupId: com.sun.xml.ws
+      artifactId: rt
 
 ---
 type: specs.openrewrite.org/v1beta/recipe
