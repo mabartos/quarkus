@@ -62,8 +62,10 @@ recipeList:
   - org.openrewrite.java.migrate.JavaxResourceToJakartaResource
   - org.openrewrite.java.migrate.JavaxSecurityToJakartaSecurity
   - org.openrewrite.java.migrate.JavaxServletToJakartaServlet
+  - org.openrewrite.java.migrate.JBossTransactionMigrationToJakartaTransaction
   - org.openrewrite.java.migrate.JavaxTransactionMigrationToJakartaTransaction
   - org.openrewrite.java.migrate.JavaxWebsocketToJakartaWebsocket
+  - org.openrewrite.java.migrate.JBossWsToJakartaWs
   - org.openrewrite.java.migrate.JavaxWsToJakartaWs
   - org.openrewrite.java.migrate.JavaxXmlBindMigrationToJakartaXmlBind
   - org.openrewrite.java.migrate.JavaxXmlSoapToJakartaXmlSoap
@@ -735,6 +737,42 @@ recipeList:
 
 ---
 type: specs.openrewrite.org/v1beta/recipe
+name: org.openrewrite.java.migrate.JBossTransactionMigrationToJakartaTransaction
+displayName: Migrate deprecated `org.jboss.spec.javax.transaction` packages to `jakarta.transaction`
+description: Migration from deprecated JBoss Transaction API to the JakartaEE Transaction API.
+tags:
+  - transaction
+  - jboss
+  - javax
+  - jakarta
+
+recipeList:
+  # Add JakartaEE Transaction API dependency
+  # Change of packages is done in the next step `JavaxTransactionMigrationToJakartaTransaction`
+  - org.openrewrite.maven.ChangeDependencyGroupIdAndArtifactId:
+      oldGroupId: org.jboss.spec.javax.transaction
+      oldArtifactId: jboss-transaction-api_1.3_spec
+      groupId: jakarta.transaction
+      artifactId: jakarta.transaction-api
+      newVersion: 2.x
+
+  - org.openrewrite.maven.ChangeDependencyGroupIdAndArtifactId:
+      oldGroupId: org.jboss.spec.javax.transaction
+      oldArtifactId: jboss-transaction-api_1.2_spec
+      groupId: jakarta.transaction
+      artifactId: jakarta.transaction-api
+      newVersion: 2.x
+
+  - org.openrewrite.maven.ChangeDependencyGroupIdAndArtifactId:
+      oldGroupId: org.jboss.spec.javax.transaction
+      oldArtifactId: jboss-transaction-api_1.1_spec
+      groupId: jakarta.transaction
+      artifactId: jakarta.transaction-api
+      newVersion: 2.x
+
+
+---
+type: specs.openrewrite.org/v1beta/recipe
 name: org.openrewrite.java.migrate.JavaxTransactionMigrationToJakartaTransaction
 displayName: Migrate deprecated `javax.transaction` packages to `jakarta.transaction`
 description: Java EE has been rebranded to Jakarta EE, necessitating a package relocation.
@@ -794,6 +832,42 @@ recipeList:
   - org.openrewrite.maven.RemoveDependency:
       groupId: javax.websocket
       artifactId: javax.websocket-api
+
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.openrewrite.java.migrate.JBossWsToJakartaWs
+displayName: Migrate deprecated `org.jboss.spec.javax.ws` packages to `jakarta.ws`
+description: Migration from deprecated JBoss JAX-RS API to the JakartaEE JAX-RS API.
+tags:
+  - jboss
+  - javax
+  - jakarta
+
+recipeList:
+  # Change of packages is done in the next step `JavaxWsToJakartaWs`
+  # Remove JBoss JAX-RS 2.1
+  - org.openrewrite.maven.ChangeDependencyGroupIdAndArtifactId:
+      oldGroupId: org.jboss.spec.javax.ws.rs
+      oldArtifactId: jboss-jaxrs-api_2.1_spec
+      groupId: jakarta.ws.rs
+      artifactId: jakarta.ws.rs-api
+      newVersion: 2.x
+
+  # Remove JBoss JAX-RS 2.0
+  - org.openrewrite.maven.ChangeDependencyGroupIdAndArtifactId:
+      oldGroupId: org.jboss.spec.javax.ws.rs
+      oldArtifactId: jboss-jaxrs-api_2.0_spec
+      groupId: jakarta.ws.rs
+      artifactId: jakarta.ws.rs-api
+      newVersion: 2.x
+
+  # Remove JBoss JAX-RS 2.1
+  - org.openrewrite.maven.ChangeDependencyGroupIdAndArtifactId:
+      oldGroupId: org.jboss.spec.javax.ws.rs
+      oldArtifactId: jboss-jaxrs-api_1.1_spec
+      groupId: jakarta.ws.rs
+      artifactId: jakarta.ws.rs-api
+      newVersion: 2.x
 
 ---
 type: specs.openrewrite.org/v1beta/recipe
