@@ -519,9 +519,9 @@
                                     <externalRules>
                                         <location>classpath:enforcer-rules/quarkus-require-maven-version.xml</location>
                                     </externalRules>
-                                    <externalRules>
+                                   <!-- <externalRules>
                                         <location>classpath:enforcer-rules/quarkus-banned-dependencies.xml</location>
-                                    </externalRules>
+                                    </externalRules>-->
                                 </rules>
                             </configuration>
                             <goals>

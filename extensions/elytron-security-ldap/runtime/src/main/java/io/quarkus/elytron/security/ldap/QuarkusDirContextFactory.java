@@ -14,6 +14,10 @@ import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.PasswordCallback;
 
+import javax.security.auth.message.MessageInfo;
+import javax.security.auth.message.config.AuthConfig;
+import javax.security.jacc.PolicyContext;
+
 import org.wildfly.security.auth.realm.ldap.DirContextFactory;
 import org.wildfly.security.manager.action.SetContextClassLoaderAction;
 
@@ -45,6 +49,11 @@ public class QuarkusDirContextFactory implements DirContextFactory {
     @Override
     public DirContext obtainDirContext(ReferralMode mode) throws NamingException {
         char[] charPassword = null;
+
+        AuthConfig cfg = null;
+        MessageInfo msgIngo = null;
+        PolicyContext ctx = null;
+
         if (securityCredential != null) { // password from String
             charPassword = securityCredential.toCharArray();
         }
