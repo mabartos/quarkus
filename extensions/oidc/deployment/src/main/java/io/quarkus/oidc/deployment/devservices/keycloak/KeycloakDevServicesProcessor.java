@@ -65,6 +65,7 @@ import io.quarkus.oidc.deployment.devservices.OidcDevServicesBuildItem;
 import io.quarkus.oidc.runtime.devui.OidcDevServicesUtils;
 import io.quarkus.runtime.LaunchMode;
 import io.quarkus.runtime.configuration.ConfigUtils;
+import io.quarkus.runtime.configuration.MemorySize;
 import io.smallrye.mutiny.TimeoutException;
 import io.smallrye.mutiny.Uni;
 import io.vertx.core.Vertx;
@@ -375,6 +376,7 @@ public class KeycloakDevServicesProcessor {
                     capturedDevServicesConfiguration.javaOpts,
                     capturedDevServicesConfiguration.startCommand,
                     capturedDevServicesConfiguration.showLogs,
+                    capturedDevServicesConfiguration.containerMemLimit,
                     errors);
 
             timeout.ifPresent(oidcContainer::withStartupTimeout);
@@ -447,12 +449,13 @@ public class KeycloakDevServicesProcessor {
         private List<RealmRepresentation> realmReps = new LinkedList<>();
         private final Optional<String> startCommand;
         private final boolean showLogs;
+        private final MemorySize containerMemLimit;
         private final List<String> errors;
 
         public QuarkusOidcContainer(DockerImageName dockerImageName, OptionalInt fixedExposedPort, boolean useSharedNetwork,
                 List<String> realmPaths, Map<String, String> resources, String containerLabelValue,
                 boolean sharedContainer, Optional<String> javaOpts, Optional<String> startCommand, boolean showLogs,
-                List<String> errors) {
+                MemorySize containerMemLimit, List<String> errors) {
             super(dockerImageName);
 
             this.useSharedNetwork = useSharedNetwork;
@@ -473,6 +476,7 @@ public class KeycloakDevServicesProcessor {
             this.fixedExposedPort = fixedExposedPort;
             this.startCommand = startCommand;
             this.showLogs = showLogs;
+            this.containerMemLimit = containerMemLimit;
             this.errors = errors;
 
             super.setWaitStrategy(Wait.forLogMessage(".*Keycloak.*started.*", 1));
@@ -546,6 +550,13 @@ public class KeycloakDevServicesProcessor {
                     LOG.info("Keycloak: " + t.getUtf8StringWithoutLineEnding());
                 });
             }
+
+            super.withCreateContainerCmdModifier((container) -> Optional.ofNullable(container.getHostConfig())
+                    .ifPresent(hostConfig -> {
+                        final var limit = containerMemLimit.asLongValue();
+                        hostConfig.withMemory(limit);
+                        LOG.debug("Set container limit (bytes): " + limit);
+                    }));
 
             LOG.infof("Using %s powered Keycloak distribution", keycloakX ? "Quarkus" : "WildFly");
         }
